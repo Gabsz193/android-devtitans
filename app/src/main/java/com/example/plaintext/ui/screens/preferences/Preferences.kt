@@ -1,29 +1,21 @@
 package com.example.plaintext.ui.screens.preferences
 
 
-import androidx.compose.foundation.clickable
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.plaintext.ui.screens.login.TopBarComponent
 import com.example.plaintext.ui.screens.util.PreferenceInput
 import com.example.plaintext.ui.screens.util.PreferenceItem
-import com.example.plaintext.ui.viewmodel.PreferencesState
 import com.example.plaintext.ui.viewmodel.PreferencesViewModel
-import kotlinx.coroutines.delay
 
 @Composable
 fun SettingsScreen(navController: NavHostController?,
@@ -34,12 +26,12 @@ fun SettingsScreen(navController: NavHostController?,
             TopBarComponent()
         }
     ){ padding ->
-        SettingsContent(modifier = Modifier.padding(padding), viewModel)
+        SettingsContent(modifier = Modifier.padding(padding), viewModel, navController)
     }
 }
 
 @Composable
-fun SettingsContent(modifier: Modifier = Modifier, viewModel: PreferencesViewModel) {
+fun SettingsContent(modifier: Modifier = Modifier, viewModel: PreferencesViewModel, navController: NavHostController?) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -47,12 +39,13 @@ fun SettingsContent(modifier: Modifier = Modifier, viewModel: PreferencesViewMod
             .verticalScroll(rememberScrollState())){
 
         PreferenceInput(
-            title = "Preencher Login",
+            title = "Setar Login",
             label = "Login",
             fieldValue = "",
-            summary = "Preencher login na tela inicial"
+            summary = "Login para entrar no sistema"
+
         ){
-            // função para alterar o login
+            viewModel.updateLogin(it)
         }
 
         PreferenceInput(
@@ -61,21 +54,17 @@ fun SettingsContent(modifier: Modifier = Modifier, viewModel: PreferencesViewMod
             fieldValue = "",
             summary = "Senha para entrar no sistema"
         ){
-            // função para alterar a senha
+            viewModel.updatePassword(it)
         }
 
         PreferenceItem(
             title = "Preencher Login",
             summary = "Preencher login na tela inicial",
-            onClick = {
-                // deve alterar o estado que representa se o switch está ligado ou não
-            },
+            onClick = { viewModel.updatePreencher() },
             control = {
                 Switch(
-                    checked = false, // deve ler o estado que representa se o switch está ligado ou não
-                    onCheckedChange = {
-                        // deve alterar o estado que representa se o switch está ligado ou não
-                    }
+                    checked = viewModel.preferencesState.preencher,
+                    onCheckedChange = { viewModel.updatePreencher() }
                 )
             }
         )
