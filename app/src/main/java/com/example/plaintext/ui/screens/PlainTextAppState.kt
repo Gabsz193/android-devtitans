@@ -1,19 +1,15 @@
 package com.example.plaintext.ui.screens
 
 import android.content.Context
-import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.plaintext.data.model.PasswordInfo
+import com.example.plaintext.data.model.Password
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -23,11 +19,6 @@ sealed class Screen() {
     object Login;
 
     @Serializable
-    data class Hello(
-        val name: String?
-    )
-
-    @Serializable
     object Preferences;
 
     @Serializable
@@ -35,11 +26,12 @@ sealed class Screen() {
 
     @Serializable
     data class EditList(
-        val password: PasswordInfo
+        val id : Int,
+        val name: String,
+        val login: String,
+        val password: String,
+        val notes: String?
     );
-
-    @Serializable
-    object sensors;
 }
 
 @Composable
@@ -67,11 +59,17 @@ class JetcasterAppState(
     }
 
     fun navigateToList() {
-        navController.navigate(Screen.EditList(PasswordInfo(1,"d","", "","")))
+        navController.navigate(Screen.List)
     }
 
-    fun navigateToHello(name: String?){
-        navController.navigate(Screen.Hello(name))
+    fun navigateToEditList(password: Password) {
+        navController.navigate(Screen.EditList(
+            password.id,
+            password.name,
+            password.login,
+            password.password,
+            password.notes
+        ))
     }
 
     fun navigateToLogin(){

@@ -1,14 +1,12 @@
 package com.example.plaintext.ui.screens.list
 
-import android.content.res.Configuration
+import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,7 +19,6 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -32,21 +29,45 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.plaintext.R
-import com.example.plaintext.ui.screens.login.TopBarComponent
-import com.example.plaintext.ui.viewmodel.ListViewModel
 import com.example.plaintext.ui.viewmodel.ListViewState
-import androidx.compose.foundation.overscroll
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.plaintext.data.model.PasswordInfo
+import com.example.plaintext.data.model.Password
+import com.example.plaintext.ui.screens.JetcasterAppState
+import com.example.plaintext.ui.viewmodel.ListViewModel
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ListView(
-) {}
+    appState : JetcasterAppState,
+    listViewModel: ListViewModel = hiltViewModel()
+) {
+    BackHandler {
+        appState.navigateToLogin()
+    }
+    Scaffold(
+        floatingActionButton = {
+            AddButton(
+                onClick = { appState.navigateToEditList(
+                    Password(
+                        0,
+                        "",
+                        "",
+                        "",
+                        ""
+                    )
+                ) }
+            )
+        }
+    ) { innerPadding ->
+        ListItemContent(
+            modifier = Modifier.padding(innerPadding),
+            listState = listViewModel.listViewState,
+            navigateToEdit = { appState.navigateToEditList(it) }
+        )
+    }
+
+}
 
 @Composable
 fun AddButton(onClick: () -> Unit) {
@@ -59,12 +80,11 @@ fun AddButton(onClick: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ListItemContent(
     modifier: Modifier,
     listState: ListViewState,
-    navigateToEdit: (password: PasswordInfo) -> Unit
+    navigateToEdit: (password: Password) -> Unit
 ) {
         when {
             !listState.isCollected -> {
@@ -100,8 +120,8 @@ fun LoadingScreen() {
 
 @Composable
 fun ListItem(
-    password: PasswordInfo,
-    navigateToEdit: (password: PasswordInfo) -> Unit
+    password: Password,
+    navigateToEdit: (password: Password) -> Unit
 ) {
     val title = password.name
     val subTitle = password.login

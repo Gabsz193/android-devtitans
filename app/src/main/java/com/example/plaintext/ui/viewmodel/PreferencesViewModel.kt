@@ -5,10 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.createSavedStateHandle
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -26,15 +22,15 @@ class PreferencesViewModel @Inject constructor(
         private set
 
     fun updateLogin(login: String) {
-
+        preferencesState = preferencesState.copy(login = login)
     }
 
     fun updatePassword(password: String) {
-
+        preferencesState = preferencesState.copy(password = password)
     }
 
-    fun updatePreencher(preencher: Boolean) {
-
+    fun updatePreencher() {
+        preferencesState = preferencesState.copy(preencher = !preferencesState.preencher)
     }
 
     fun checkCredentials(login: String, password: String): Boolean{
