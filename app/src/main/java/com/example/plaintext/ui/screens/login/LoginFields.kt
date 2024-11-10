@@ -98,14 +98,12 @@ fun TextField(properties: FieldProperties, isPassword : Boolean = false) {
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
 
     Row(
-        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         Text(
             text = "${properties.title}:",
             textAlign = TextAlign.End,
-            modifier = Modifier.weight(1f)
         )
         if(isPassword) {
             OutlinedTextField(

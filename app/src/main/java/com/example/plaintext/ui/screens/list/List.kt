@@ -1,6 +1,7 @@
 package com.example.plaintext.ui.screens.list
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -41,12 +42,15 @@ fun ListView(
     appState : JetcasterAppState,
     listViewModel: ListViewModel = hiltViewModel()
 ) {
+    BackHandler {
+        appState.navigateToLogin()
+    }
     Scaffold(
         floatingActionButton = {
             AddButton(
                 onClick = { appState.navigateToEditList(
                     Password(
-                        1,
+                        0,
                         "",
                         "",
                         "",
@@ -59,7 +63,7 @@ fun ListView(
         ListItemContent(
             modifier = Modifier.padding(innerPadding),
             listState = listViewModel.listViewState,
-            navigateToEdit = {}
+            navigateToEdit = { appState.navigateToEditList(it) }
         )
     }
 
@@ -76,7 +80,6 @@ fun AddButton(onClick: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ListItemContent(
     modifier: Modifier,
